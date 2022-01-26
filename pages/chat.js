@@ -9,6 +9,10 @@ export default function ChatPage() {
 
 
   function enviaNovaMensagem(novaMensagem) {
+    if ('' == novaMensagem) {
+      return;
+    }
+
     const msg = {
       id: mensagens.length,
       autor: 'usuario_fixo',
@@ -95,6 +99,15 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+
+            <Button
+              type="button"
+              variant='primary'
+              colorVariant='neutral'
+              label='Enviar'
+              onClick={() => { enviaNovaMensagem(mensagem)}}
+            />
+
           </Box>
         </Box>
       </Box>
@@ -135,52 +148,70 @@ function MessageList(props) {
     >
 
       {props.listaDeMensagens.map((item) => {
-        return (
-          <Text
-            key={item.id}
-            tag="li"
-            styleSheet={{
-              borderRadius: '5px',
-              padding: '6px',
-              marginBottom: '12px',
-              hover: {
-                backgroundColor: appConfig.theme.colors.neutrals[700],
-              }
-            }}
-          >
-            <Box
-              styleSheet={{
-                marginBottom: '8px',
-              }}
-            >
-              <Image
-                styleSheet={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  display: 'inline-block',
-                  marginRight: '8px',
-                }}
-                src={`https://github.com/vanessametonini.png`}
-              />
-              <Text tag="strong">
-                {item.autor}
-              </Text>
-              <Text
-                styleSheet={{
-                  fontSize: '10px',
-                  marginLeft: '8px',
-                  color: appConfig.theme.colors.neutrals[300],
-                }}
-                tag="span"
-              >
-                {(new Date().toLocaleDateString())}
-              </Text>
-            </Box>
-            {item.texto}
-          </Text>
-        )
+        return <Message item={item} />
       })}
     </Box>
+  )
+}
+
+function Message(props) {
+  const item = props.item;
+  return (
+    <Text
+      key={item.id}
+      tag="li"
+      styleSheet={{
+        borderRadius: '5px',
+        padding: '6px',
+        marginBottom: '12px',
+        hover: {
+          backgroundColor: appConfig.theme.colors.neutrals[700],
+        }
+      }}
+    >
+      <Box
+        styleSheet={{
+          marginBottom: '8px',
+        }}
+      >
+        <Image
+          styleSheet={{
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            display: 'inline-block',
+            marginRight: '8px',
+          }}
+          src='avatar_chat.png'
+        />
+        <Text tag="strong">
+          {item.autor}
+        </Text>
+        <Text
+          styleSheet={{
+            fontSize: '10px',
+            marginLeft: '8px',
+            color: appConfig.theme.colors.neutrals[300],
+          }}
+          tag="span"
+        >
+          {(new Date().toLocaleDateString())}
+        </Text>
+        <Button
+          styleSheet={{
+            float: 'right'
+          }}
+          id={item.id}
+          variant='tertiary'
+          colorVariant='neutral'
+          iconName='timesCircle'
+          onClick={(event) => {
+            // Não deu pra fazer a remoção, pois dependendo onde no botão você clica volta um target diferente...
+            console.log('apagar', event.target.id)
+          }}
+        />
+      </Box>
+      {item.texto}
+    </Text>
   )
 }

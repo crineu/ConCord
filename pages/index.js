@@ -31,7 +31,7 @@ function buscaDadosGithub(usuario) {
 }
 
 export default function PaginaInicial() {
-  const [loginGitHub, setloginGitHub] = React.useState('');
+  const [loginGitHub, setloginGitHub] = React.useState('crineu');
   const [location, setLocation] = React.useState('Localização');
   const [nome, setNome] = React.useState('Nome Completo');
   const roteador = useRouter();
