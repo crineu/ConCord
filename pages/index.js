@@ -19,10 +19,22 @@ function Titulo(props) {
   )
 }
 
-export default function PaginaInicial() {
-  const [nomeUsuario, setNomeUsuario] = React.useState('crineu');
-  const roteador = useRouter();
+function buscaDadosGithub(usuario) {
+  return fetch(`https://api.github.com/users/${usuario}`)
+    .then((resposta) => {
+      return resposta.json();
+    })
+    .then((jaison) => {
+      // console.log("aqui tem que ter os dados ", jaison )
+      return jaison;
+    })
+}
 
+export default function PaginaInicial() {
+  const [loginGitHub, setloginGitHub] = React.useState('');
+  const [location, setLocation] = React.useState('Localização');
+  const [nome, setNome] = React.useState('Nome Completo');
+  const roteador = useRouter();
 
   return (
     <>
@@ -53,7 +65,6 @@ export default function PaginaInicial() {
           <Box
             as="form"
             onSubmit={function(infosDoEvento) {
-              console.log('submeteu');
               infosDoEvento.preventDefault();
               roteador.push('/chat');          // window.location.href='/chat';
             }}
@@ -70,9 +81,16 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
-              value={nomeUsuario}
+              value={loginGitHub}
               onChange={function handle(event) {
-                setNomeUsuario(event.target.value);
+                const novoNome = event.target.value;
+
+                setloginGitHub(novoNome);
+                const dados = buscaDadosGithub(novoNome)
+                  .then((data) => {
+                    setNome(data.name);
+                    setLocation(data.location);
+                  });
               }}
               fullWidth
               textFieldColors={{
@@ -121,7 +139,7 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={`https://github.com/${nomeUsuario}.png`}
+              src={`https://github.com/${loginGitHub}.png`}
             />
             <Text
               variant="body4"
@@ -132,7 +150,18 @@ export default function PaginaInicial() {
                 borderRadius: '100px'
               }}
             >
-              {nomeUsuario}
+              {loginGitHub} @ {location}
+            </Text>
+            <Text
+              variant="body5"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals[200],
+                backgroundColor: appConfig.theme.colors.neutrals[900],
+                padding: '3px 10px',
+                borderRadius: '100px'
+              }}
+            >
+              {nome}
             </Text>
           </Box>
           {/* Photo Area */}
