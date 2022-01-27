@@ -19,22 +19,24 @@ function Titulo(props) {
   )
 }
 
-function buscaDadosGithub(usuario) {
-  return fetch(`https://api.github.com/users/${usuario}`)
-    .then((resposta) => {
-      return resposta.json();
-    })
-    .then((jaison) => {
-      // console.log("aqui tem que ter os dados ", jaison )
-      return jaison;
-    })
+function buscaDadosGitHub(login, funcaoSet) {
+  return fetch(`https://api.github.com/users/${login}`)
+    .then(resposta => resposta.json())
+    .then(json => funcaoSet(json));
 }
 
 export default function PaginaInicial() {
-  const [loginGitHub, setloginGitHub] = React.useState('crineu');
-  const [location, setLocation] = React.useState('Localização');
-  const [nome, setNome] = React.useState('Nome Completo');
+  const [gitHubLogin, setGitHubLogin] = React.useState('crineu');
+  const [gitHubData, setGitHubData] = React.useState([]);
   const roteador = useRouter();
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      const dados = buscaDadosGitHub(gitHubLogin, setGitHubData);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [gitHubLogin]);
 
   return (
     <>
@@ -81,16 +83,12 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
-              value={loginGitHub}
+              value={gitHubLogin}
               onChange={function handle(event) {
                 const novoNome = event.target.value;
 
-                setloginGitHub(novoNome);
-                const dados = buscaDadosGithub(novoNome)
-                  .then((data) => {
-                    setNome(data.name);
-                    setLocation(data.location);
-                  });
+                setGitHubLogin(novoNome);
+                setGitHubData([]);
               }}
               fullWidth
               textFieldColors={{
@@ -139,7 +137,8 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={`https://github.com/${loginGitHub}.png`}
+              // src={`https://github.com/${gitHubLogin}.png`}
+              src={gitHubData.avatar_url}
             />
             <Text
               variant="body4"
@@ -150,7 +149,7 @@ export default function PaginaInicial() {
                 borderRadius: '100px'
               }}
             >
-              {loginGitHub} @ {location}
+              {gitHubLogin} @ {gitHubData.location}
             </Text>
             <Text
               variant="body5"
@@ -161,7 +160,7 @@ export default function PaginaInicial() {
                 borderRadius: '100px'
               }}
             >
-              {nome}
+              {gitHubData.name}
             </Text>
           </Box>
           {/* Photo Area */}
