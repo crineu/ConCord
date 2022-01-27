@@ -8,6 +8,10 @@
     "https://c.tenor.com/VylWt5lyjBoAAAAC/omg-yes.gif",
     "https://i.pinimg.com/originals/96/34/c5/9634c520c9a3cd4e7f23190bb2c96500.gif"
   ],
+  "db": {
+    "url": "https://cfbeduzmvsjitzujrmbr.supabase.co",
+    "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI5Mjc0MywiZXhwIjoxOTU4ODY4NzQzfQ.TLLFitro9zyjC4nX4K832f38lNBBTD2VJuFQbf0666o"
+  },
   "theme": {
     "colors": {
       "primary": {

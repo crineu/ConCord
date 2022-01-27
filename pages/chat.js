@@ -1,27 +1,51 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React, { useState } from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_URL = appConfig.db.url;
+const SUPABASE_KEY = appConfig.db.anon_key;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+
 
 export default function ChatPage() {
-  // Sua lógica vai aqui
   const [mensagem, setMensagem] = React.useState('');
   const [mensagens, setMensagens] = React.useState([]);
 
+  React.useEffect(() => {
+    supabaseClient
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        setMensagens(data);
+      })
 
-  function enviaNovaMensagem(novaMensagem) {
-    if ('' == novaMensagem) {
+  }, []);
+
+  function enviaNovaMensagem(textoDigitado) {
+    if ('' == textoDigitado) {
       return;
     }
 
-    const msg = {
-      id: mensagens.length,
+    const novaMensagem = {
+      // id: mensagens.length,
       autor: 'usuario_fixo',
-      texto: novaMensagem,
+      texto: textoDigitado,
     }
-    setMensagens([
-      msg,
-      ...mensagens,
-    ]);
+
+    supabaseClient
+      .from('mensagens')
+      .insert([
+        novaMensagem
+      ]).then((respostaInsercao) => {
+        setMensagens([
+          respostaInsercao.data[0],
+          ...mensagens,
+        ]);
+      })
+
     setMensagem('');
   }
 
@@ -182,7 +206,7 @@ function Message(props) {
             display: 'inline-block',
             marginRight: '8px',
           }}
-          src='avatar_chat.png'
+          src={`https://github.com/${item.autor}.png`}
         />
         <Text tag="strong">
           {item.autor}
