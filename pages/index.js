@@ -26,9 +26,9 @@ function buscaDadosGitHub(login, funcaoSet) {
 }
 
 export default function PaginaInicial() {
+  const roteador = useRouter();
   const [gitHubLogin, setGitHubLogin] = React.useState('crineu');
   const [gitHubData, setGitHubData] = React.useState([]);
-  const roteador = useRouter();
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {
@@ -68,7 +68,8 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function(infosDoEvento) {
               infosDoEvento.preventDefault();
-              roteador.push('/chat');          // window.location.href='/chat';
+              // window.location.href='/chat';
+              roteador.push(`/chat?user=${gitHubLogin}`);
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

@@ -1,27 +1,56 @@
-import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React, { useState } from 'react';
-import appConfig from '../config.json';
+import { useRouter } from 'next/router'
+import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js'
+import appConfig from '../config.json';
+import { ButtonSendSticker } from './ButtonSendSticker.js'
 
 const SUPABASE_URL = appConfig.db.url;
 const SUPABASE_KEY = appConfig.db.anon_key;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY)
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+  return supabaseClient
+    .from('mensagens')
+    .on('INSERT', (respostaLive) => {
+      adicionaMensagem(respostaLive.new);
+    })
+    .subscribe();
+}
 
 
 export default function ChatPage() {
+  const gitHubLogin = useRouter().query.user;
   const [mensagem, setMensagem] = React.useState('');
   const [mensagens, setMensagens] = React.useState([]);
 
+
   React.useEffect(() => {
     supabaseClient
-      .from('mensagens')
-      .select('*')
-      .order('id', { ascending: false })
-      .then(({ data }) => {
+    .from('mensagens')
+    .select('*')
+    .order('id', { ascending: false })
+    .then(({ data }) => {
+      setMensagens(data);
         setMensagens(data);
-      })
+      });
 
+    const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
+      // setListaDeMensagens([
+      //     novaMensagem,
+      //     ...listaDeMensagens
+      // ])
+      setMensagens((valorAtualDaLista) => {
+        return [
+          novaMensagem,
+          ...valorAtualDaLista,
+        ]
+      });
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    }
   }, []);
 
   function enviaNovaMensagem(textoDigitado) {
@@ -31,7 +60,7 @@ export default function ChatPage() {
 
     const novaMensagem = {
       // id: mensagens.length,
-      autor: 'batman',
+      autor: gitHubLogin,
       texto: textoDigitado,
     }
 
@@ -39,10 +68,7 @@ export default function ChatPage() {
       .from('mensagens')
       .insert([ novaMensagem ])
       .then((respostaInsercao) => {
-        setMensagens([
-          respostaInsercao.data[0],
-          ...mensagens,
-        ]);
+        console.log('respostaInsercao', respostaInsercao);
       })
 
     setMensagem('');
@@ -139,6 +165,12 @@ export default function ChatPage() {
               colorVariant='neutral'
               label='Enviar'
               onClick={() => { enviaNovaMensagem(mensagem)}}
+            />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                // console.log('chat.js clibou na parada', sticker)
+                enviaNovaMensagem(`:sticker: ${sticker}`);
+              }}
             />
 
           </Box>
@@ -243,7 +275,22 @@ function Message(props) {
           onClick={() => { console.log('apagar mensagem', item.id) }}
         />
       </Box>
-      {item.texto}
+
+      {item.texto.startsWith(':sticker:')
+        ? (
+          <Image
+            src={item.texto.replace(':sticker:', '')}
+            styleSheet={{
+              maxHeight: '140px',
+              maxWidth: '140px',
+            }}
+          />
+        )
+        : ( item.texto )
+      }
+
+
+
     </Text>
   )
 }
