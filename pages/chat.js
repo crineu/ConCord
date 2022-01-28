@@ -31,15 +31,14 @@ export default function ChatPage() {
 
     const novaMensagem = {
       // id: mensagens.length,
-      autor: 'usuario_fixo',
+      autor: 'batman',
       texto: textoDigitado,
     }
 
     supabaseClient
       .from('mensagens')
-      .insert([
-        novaMensagem
-      ]).then((respostaInsercao) => {
+      .insert([ novaMensagem ])
+      .then((respostaInsercao) => {
         setMensagens([
           respostaInsercao.data[0],
           ...mensagens,
@@ -47,6 +46,16 @@ export default function ChatPage() {
       })
 
     setMensagem('');
+  }
+
+  function apagaMensagem(idDaMensagem) {
+    supabaseClient
+      .from('mensagens')
+      .delete()
+      .match({ id: idDaMensagem})
+      .then((respostaRemocao) => {
+        console.log(respostaRemocao);
+      })
   }
 
   // ./Sua lógica vai aqui
@@ -172,7 +181,7 @@ function MessageList(props) {
     >
 
       {props.listaDeMensagens.map((item) => {
-        return <Message item={item} />
+        return <Message item={item} key={item.id} />
       })}
     </Box>
   )
@@ -182,16 +191,17 @@ function Message(props) {
   const item = props.item;
   return (
     <Text
-      key={item.id}
-      tag="li"
-      styleSheet={{
-        borderRadius: '5px',
-        padding: '6px',
-        marginBottom: '12px',
-        hover: {
-          backgroundColor: appConfig.theme.colors.neutrals[700],
-        }
-      }}
+    key={item.id.toString()}
+    id={item.id.toString()}
+    tag="li"
+    styleSheet={{
+      borderRadius: '5px',
+      padding: '6px',
+      marginBottom: '12px',
+      hover: {
+        backgroundColor: appConfig.theme.colors.neutrals[700],
+      }
+    }}
     >
       <Box
         styleSheet={{
@@ -229,10 +239,8 @@ function Message(props) {
           variant='tertiary'
           colorVariant='neutral'
           iconName='timesCircle'
-          onClick={(event) => {
-            // Não deu pra fazer a remoção, pois dependendo onde no botão você clica volta um target diferente...
-            console.log('apagar', event.target.id)
-          }}
+          // onClick={() => { apagaMensagem(item.id) }}
+          onClick={() => { console.log('apagar mensagem', item.id) }}
         />
       </Box>
       {item.texto}
