@@ -177,10 +177,16 @@ export default function ChatPage() {
               onClick={() => { enviaNovaMensagem(mensagem)}}
             />
             <ButtonSendSticker
+              stickersList={appConfig.stickers}
               onStickerClick={(sticker) => {
                 // console.log('chat.js clibou na parada', sticker)
                 enviaNovaMensagem(`:sticker: ${sticker}`);
               }}
+              boxBackground={appConfig.theme.colors.neutrals[800]}
+              titleColor={appConfig.theme.colors.neutrals["100"]}
+              focusColor={appConfig.theme.colors.neutrals[500]}
+              buttonColor={appConfig.theme.colors.neutrals[300]}
+
             />
 
           </Box>

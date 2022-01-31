@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Button, Text, Image } from '@skynexui/components';
-import appConfig from '../config.json';
 
 export function ButtonSendSticker(props) {
   const [isOpen, setOpenState] = React.useState('');
@@ -23,7 +22,7 @@ export function ButtonSendSticker(props) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: appConfig.theme.colors.neutrals[300],
+          backgroundColor: props.buttonColor || 'green',
           filter: isOpen ? 'grayscale(0)' : 'grayscale(1)',
           hover: {
             filter: 'grayscale(0)',
@@ -39,7 +38,7 @@ export function ButtonSendSticker(props) {
             flexDirection: 'column',
             borderRadius: '5px',
             position: 'absolute',
-            backgroundColor: appConfig.theme.colors.neutrals[800],
+            backgroundColor: props.boxBackground || 'yellow',
             width: {
               xs: '200px',
               sm: '290px',
@@ -54,7 +53,7 @@ export function ButtonSendSticker(props) {
         >
           <Text
             styleSheet={{
-              color: appConfig.theme.colors.neutrals["000"],
+              color: props.titleColor || 'yellow',
               fontWeight: 'bold',
             }}
           >
@@ -71,7 +70,7 @@ export function ButtonSendSticker(props) {
               overflow: 'scroll',
             }}
           >
-            {appConfig.stickers.map((sticker) => (
+            {(props.stickersList || []).map((sticker) => (
               <Text
                 onClick={() => {
                   if (Boolean(props.onStickerClick)) {
@@ -84,10 +83,10 @@ export function ButtonSendSticker(props) {
                   borderRadius: '5px',
                   padding: '10px',
                   focus: {
-                    backgroundColor: appConfig.theme.colors.neutrals[600],
+                    backgroundColor: props.focusColor || 'green',
                   },
                   hover: {
-                    backgroundColor: appConfig.theme.colors.neutrals[600],
+                    backgroundColor: props.focusColor || 'green',
                   }
                 }}
               >
