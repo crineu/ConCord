@@ -4,6 +4,7 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js'
 import appConfig from '../config.json';
 import { ButtonSendSticker } from './ButtonSendSticker.js'
+import { MessageList } from './MessageList.js'
 
 const SUPABASE_URL = appConfig.db.url;
 const SUPABASE_KEY = appConfig.db.anon_key;
@@ -123,8 +124,17 @@ export default function ChatPage() {
           }}
         >
 
-          <MessageList listaDeMensagens={mensagens} />
-
+          <MessageList
+            listaDeMensagens={mensagens}
+            textColor={appConfig.theme.colors.neutrals["000"]}
+            dateColor={appConfig.theme.colors.neutrals[300]}
+            hoverColor={appConfig.theme.colors.neutrals[700]}
+            borderColor={appConfig.theme.colors.neutrals[800]}
+            onDeleteClick={(messageId) => {
+              // console.log('chat.js apagou id ', messageId)
+              apagaMensagem(messageId);
+            }}
+          />
 
           <Box
             as="form"
@@ -195,102 +205,5 @@ function Header() {
         />
       </Box>
     </>
-  )
-}
-
-function MessageList(props) {
-  return (
-    <Box
-      tag="ul"
-      styleSheet={{
-        overflow: 'scroll',
-        display: 'flex',
-        flexDirection: 'column-reverse',
-        flex: 1,
-        color: appConfig.theme.colors.neutrals["000"],
-        marginBottom: '16px',
-      }}
-    >
-
-      {props.listaDeMensagens.map((item) => {
-        return <Message item={item} key={item.id} />
-      })}
-    </Box>
-  )
-}
-
-function Message(props) {
-  const item = props.item;
-  return (
-    <Text
-    key={item.id.toString()}
-    id={item.id.toString()}
-    tag="li"
-    styleSheet={{
-      borderRadius: '5px',
-      padding: '6px',
-      marginBottom: '12px',
-      hover: {
-        backgroundColor: appConfig.theme.colors.neutrals[700],
-      }
-    }}
-    >
-      <Box
-        styleSheet={{
-          marginBottom: '8px',
-        }}
-      >
-        <Image
-          styleSheet={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            display: 'inline-block',
-            marginRight: '8px',
-          }}
-          src={`https://github.com/${item.autor}.png`}
-        />
-        <Text tag="strong">
-          {item.autor}
-        </Text>
-        <Text
-          styleSheet={{
-            fontSize: '10px',
-            marginLeft: '8px',
-            color: appConfig.theme.colors.neutrals[300],
-          }}
-          tag="span"
-        >
-          {(new Date().toLocaleDateString())}
-        </Text>
-        <Button
-          styleSheet={{
-            float: 'right'
-          }}
-          id={item.id}
-          variant='tertiary'
-          colorVariant='neutral'
-          iconName='timesCircle'
-          // onClick={() => { apagaMensagem(item.id) }}
-          onClick={() => { console.log('apagar mensagem', item.id) }}
-        />
-      </Box>
-
-      {item.texto.startsWith(':sticker:')
-        ? (
-          <Image
-            src={item.texto.replace(':sticker:', '')}
-            styleSheet={{
-              maxHeight: '140px',
-              maxWidth: '140px',
-            }}
-          />
-        )
-        : ( item.texto )
-      }
-
-
-
-    </Text>
   )
 }
