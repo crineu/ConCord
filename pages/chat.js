@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js'
 import appConfig from '../config.json';
-import { ButtonSendSticker } from './ButtonSendSticker.js'
-import { MessageList } from './MessageList.js'
+import { ButtonSendSticker } from '../components/ButtonSendSticker.js'
+import { MessageList } from '../components/MessageList.js'
 
 const SUPABASE_URL = appConfig.db.url;
 const SUPABASE_KEY = appConfig.db.anon_key;

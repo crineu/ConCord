@@ -72,6 +72,7 @@ export function MessageList(props) {
               />
             </Box>
 
+
             {item.texto.startsWith(':sticker:')
               ? (
                 <Image
@@ -86,7 +87,6 @@ export function MessageList(props) {
             }
 
 
-
           </Text>
         )
 
@@ -94,6 +94,3 @@ export function MessageList(props) {
     </Box>
   )
 }
-
-
-
